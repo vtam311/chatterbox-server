@@ -1,5 +1,6 @@
 /* Import node's http module: */
 var http = require("http");
+var handleRequest = require("request-handler.js");
 
 
 // Every server needs to listen on a port with a unique number. The
@@ -15,6 +16,9 @@ var port = 3000;
 var ip = "127.0.0.1";
 
 
+// var handleRequest = function(request, response) {
+//   response.end("It works!! path hit: " + request.url);
+// };
 
 // We use node's http module to create a server.
 //
