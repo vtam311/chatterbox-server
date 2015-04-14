@@ -43,8 +43,8 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
 
 
-  if(request.method === 'POST'){
-    if(request.url === "/classes/room1") {
+  if(request.method == 'POST'){
+    if(request.url == "/classes/room1" || request.url == "/classes/messages") {
       statusCode = 201;
       var body = '';
       request.on('data', function(data) {
