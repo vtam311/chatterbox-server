@@ -14,6 +14,8 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var requestHandler = function(request, response) {
+
+  var body = '';
 // Request and Response come from node's http module.
 //
 // They include information about both the incoming request, such as
@@ -46,7 +48,6 @@ var requestHandler = function(request, response) {
   if(request.method == 'POST'){
     if(request.url == "/classes/room1" || request.url == "/classes/messages") {
       statusCode = 201;
-      var body = '';
       request.on('data', function(data) {
         body += data;
         console.log("partial body: " + body);
