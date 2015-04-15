@@ -38,11 +38,13 @@ var requestHandler = function(request, response) {
 
   if(request.url == "/classes/room1" || request.url == "/classes/room" || request.url == "/classes/messages") {
     if(request.method == 'POST'){
+      var chunk = "";
       statusCode = 201;
       request.on('data', function(data) {
-        dataObj = JSON.parse(data);
+        chunk += data;
       });
       request.on('end', function() {
+        dataObj = JSON.parse(chunk);
         responseObj.results.push(dataObj);
         response.writeHead(statusCode, headers);
         response.end(JSON.stringify(responseObj));
