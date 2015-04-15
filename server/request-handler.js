@@ -9,27 +9,20 @@ You'll have to figure out a way to export this function from
 this file and include it in basic-server.js so that it actually works.
 
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
-
-
 **************************************************************/
+
+var dataObj = {};
+var responseObj = {"results":[]};
+
 
 var requestHandler = function(request, response) {
 
-  var body = '';
 // Request and Response come from node's http module.
 //
 // They include information about both the incoming request, such as
 // headers and URL, and about the outgoing response, such as its status
 // and content.
-//
-// Documentation for both request and response can be found in the HTTP section at
-// http://nodejs.org/documentation/api/
 
-// Do some basic logging.
-//
-// Adding more logging to your server can be an easy way to get passive
-// debugging help, but you should always be careful about leaving stray
-// console.logs in your code.
 
   console.log("Serving request type " + request.method + " for url " + request.url);
 
@@ -41,57 +34,46 @@ var requestHandler = function(request, response) {
 
 
   headers['Content-Type'] = "application/json";
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
 
 
-  if(request.method == 'POST'){
-    if(request.url == "/classes/room1" || request.url == "/classes/messages") {
+  if(request.url == "/classes/room1" || request.url == "/classes/room" || request.url == "/classes/messages") {
+    if(request.method == 'POST'){
       statusCode = 201;
       request.on('data', function(data) {
-        body += data;
-        console.log("partial body: " + body);
+        dataObj = JSON.parse(data);
       });
       request.on('end', function() {
-        console.log('body: ' + body);
+        responseObj.results.push(dataObj);
+        response.writeHead(statusCode, headers);
+        response.end(JSON.stringify(responseObj));
       });
     }
+
+    if(request.method == 'GET'){
+      statusCode = 200;
+      console.log("request url" + request.url);
+      request.on('end', function() {
+        response.writeHead(statusCode, headers);
+        response.end(JSON.stringify(responseObj));
+      });
+    }
+
+    if(request.method == 'OPTIONS'){
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
+      response.end(null);
+    }
+  } else {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end("404 Error");
   }
 
-   response.writeHead(statusCode, headers);
 
-        // var body = '';
-        // req.on('data', function (data) {
-        //     body += data;
-        //     console.log("Partial body: " + body);
-        // });
-        // req.on('end', function () {
-        //     console.log("Body: " + body);
-        // });
-
-  // if(request.method === 'GET'){
-  //   response.write('GET');
-  //   response.write(request.url);
-  //     // response.on('data', function(data){
-  //     //   testArr1.push(data);
-  //     // });
-  //     // response.write(testArr1);
-  // }
-
-
-
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  var results = [];
-  var responseObj = {"results":results};
   // response.write(request.method);
   response.end(JSON.stringify(responseObj));
-  // response.end("hello world");
 };
 
 exports.requestHandler = requestHandler;
