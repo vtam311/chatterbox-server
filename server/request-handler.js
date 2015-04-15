@@ -34,10 +34,11 @@ var requestHandler = function(request, response) {
 
 
   headers['Content-Type'] = "application/json";
+  console.log(request.url.indexOf("/classes/"));
 
-
-  if(request.url == "/classes/room1" || request.url == "/classes/room" || request.url == "/classes/messages") {
-    if(request.method == 'POST'){
+  if(request.url.indexOf("classes")) {
+    if(request.method === 'POST'){
+      console.log("went inside post");
       var chunk = "";
       statusCode = 201;
       request.on('data', function(data) {
@@ -50,32 +51,32 @@ var requestHandler = function(request, response) {
         response.end(JSON.stringify(responseObj));
       });
     }
-
-    if(request.method == 'GET'){
+    if(request.method === 'GET'){
+      console.log("went inside get");
       statusCode = 200;
       console.log("request url" + request.url);
       request.on('end', function() {
+        console.log("end", statusCode, headers);
         response.writeHead(statusCode, headers);
         response.end(JSON.stringify(responseObj));
       });
     }
 
-    if(request.method == 'OPTIONS'){
+    if(request.method === 'OPTIONS') {
       statusCode = 200;
+      console.log('options');
       response.writeHead(statusCode, headers);
       response.end(null);
     }
+    console.log("went outside classes");
+
   } else {
-    statusCode = 404;
-    response.writeHead(statusCode, headers);
-    response.end("404 Error");
+
+      statusCode = 404;
+      response.writeHead(statusCode, headers);
+      response.end("404 Error");
+
   }
-
-
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-  // response.write(request.method);
-  response.end(JSON.stringify(responseObj));
 };
 
 exports.requestHandler = requestHandler;
